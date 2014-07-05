@@ -1,0 +1,13 @@
+machine:
+  java:
+    version: openjdk7
+
+dependencies:
+  pre:
+    - gradle dependencies
+  cache_directories:
+    - /home/ubuntu/.m2/repository
+
+test:
+  override:
+    - gradle test

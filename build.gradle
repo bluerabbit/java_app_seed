@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+mainClassName = 'org.gradle.Executor'
+
+defaultTasks 'build'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+group    = 'org.gradle.Executor'
+version  = '0.0.1'
+artifact = 'Executor'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile "net.sf.opencsv:opencsv:2.3"
+  compile "org.apache.poi:poi:3.10-FINAL"
+  compile "org.apache.poi:poi-ooxml:3.10-FINAL"
+  compile "org.apache.poi:ooxml-schemas:1.1"
+  testCompile 'junit:junit:4.10'
+}
+
+jar {
+  from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+test {
+  // show standard out and standard error of the test JVM(s) on the console
+  testLogging.showStandardStreams = true
+
+  minHeapSize = "128m"
+  maxHeapSize = "512m"
+
+  jvmArgs '-XX:MaxPermSize=256m'
+
+  beforeTest { descriptor ->
+     logger.lifecycle("Running test: " + descriptor)
+  }
+}
+
+manifest.mainAttributes("Main-Class" : "org.gradle.Executor")
+
+run {
+  if (project.hasProperty('args')) {
+    args project.args.split('\\s+')
+  }
+}
